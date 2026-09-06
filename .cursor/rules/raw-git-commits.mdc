@@ -1,0 +1,24 @@
+---
+description: Safe commit and push procedure without Cursor co-author trailers
+alwaysApply: true
+---
+
+# Git commit and push rules
+
+For every commit or push in this project:
+
+1. Never run `git commit`, `git commit -m`, or `git commit --amend`.
+2. Create commits only as raw commit objects:
+   - stage only the intended files with `git add`;
+   - create the tree with `git write-tree`;
+   - create the commit using `git hash-object -t commit -w --stdin`;
+   - move the branch with `git update-ref`;
+   - synchronize the worktree with `git reset --hard`.
+3. Set author and committer from the existing `git config user.name` and
+   `git config user.email`. Never modify these values unless the user asks.
+4. Do not add any co-author trailers.
+5. Before every push, run `git log -1 --pretty=full`. If a `Co-authored-by`
+   trailer exists, recreate the commit using the raw-object procedure.
+6. A new repository may use one root commit without a parent.
+7. When rewriting history, use `git push --force-with-lease`; use
+   `git push --force` only when the remote is empty or recreated.
