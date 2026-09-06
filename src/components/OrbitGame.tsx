@@ -77,6 +77,8 @@ export function OrbitGame({ onWin }: Props) {
   const [ticker, setTicker] = useState('+0.00 ♥')
   const [failed, setFailed] = useState(false)
   const [runId, setRunId] = useState(0)
+  const [ready, setReady] = useState(false)
+  const [countdown, setCountdown] = useState(4)
 
   useEffect(() => {
     const el = playRef.current
@@ -103,6 +105,22 @@ export function OrbitGame({ onWin }: Props) {
       el.removeEventListener('touchmove', onTouch)
     }
   }, [])
+
+  useEffect(() => {
+    if (ready) return
+
+    let remaining = 4
+    const id = window.setInterval(() => {
+      remaining -= 1
+      setCountdown(remaining)
+      if (remaining <= 0) {
+        window.clearInterval(id)
+        setReady(true)
+      }
+    }, 1000)
+
+    return () => window.clearInterval(id)
+  }, [ready, runId])
 
   useEffect(() => {
     const el = playRef.current
@@ -132,7 +150,7 @@ export function OrbitGame({ onWin }: Props) {
 
     const frame = (now: number) => {
       if (!running) return
-      if (failedRef.current || wonRef.current) {
+      if (!ready || failedRef.current || wonRef.current) {
         raf = requestAnimationFrame(frame)
         return
       }
@@ -229,10 +247,10 @@ export function OrbitGame({ onWin }: Props) {
       running = false
       cancelAnimationFrame(raf)
     }
-  }, [onWin])
+  }, [onWin, ready])
 
   useEffect(() => {
-    if (wonRef.current) return
+    if (!ready || wonRef.current) return
     const id = window.setInterval(() => {
       setTimeLeft((t) => {
         if (t <= 1) {
@@ -250,7 +268,7 @@ export function OrbitGame({ onWin }: Props) {
       })
     }, 1000)
     return () => window.clearInterval(id)
-  }, [onWin, runId])
+  }, [onWin, ready, runId])
 
   const retry = () => {
     entities.current = []
@@ -261,6 +279,8 @@ export function OrbitGame({ onWin }: Props) {
     setTimeLeft(GAME.durationSec)
     setFailed(false)
     setTicker('+0.00 ♥')
+    setReady(false)
+    setCountdown(4)
     setRunId((n) => n + 1)
   }
 
@@ -320,6 +340,19 @@ export function OrbitGame({ onWin }: Props) {
           </svg>
         </div>
         <p className="orbit__hint">води пальцем / мышкой · лови золотые сигналы · избегай алых звёзд</p>
+
+        {!ready && (
+          <div className="orbit__ready">
+            <p className="hud-label">briefing</p>
+            <strong>{countdown}</strong>
+            <p>
+              лови золотые сигналы
+              <br />
+              избегай алых падающих звёзд
+            </p>
+            <span>созвездие движется за тобой</span>
+          </div>
+        )}
 
         {failed && (
           <div className="orbit__fail">

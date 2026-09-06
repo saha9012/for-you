@@ -217,6 +217,49 @@
   pointer-events: none;
 }
 
+.orbit__ready {
+  position: absolute;
+  inset: 0;
+  z-index: 6;
+  display: grid;
+  place-content: center;
+  justify-items: center;
+  gap: 0.65rem;
+  text-align: center;
+  background: rgba(3, 4, 10, 0.72);
+  backdrop-filter: blur(7px);
+}
+
+.orbit__ready .hud-label {
+  margin: 0;
+  font-size: 0.58rem;
+  color: rgba(110, 231, 255, 0.62);
+}
+
+.orbit__ready strong {
+  font-family: var(--font-display);
+  font-size: clamp(3.4rem, 10vw, 5.8rem);
+  font-weight: 500;
+  line-height: 0.9;
+  color: var(--gold-soft);
+  filter: drop-shadow(0 0 22px rgba(240, 199, 94, 0.35));
+}
+
+.orbit__ready > p:not(.hud-label) {
+  margin: 0;
+  color: rgba(255, 255, 255, 0.82);
+  font-size: clamp(0.82rem, 2vw, 1rem);
+  line-height: 1.55;
+}
+
+.orbit__ready > span {
+  margin-top: 0.15rem;
+  font-family: var(--font-mono);
+  font-size: 0.64rem;
+  letter-spacing: 0.06em;
+  color: rgba(255, 255, 255, 0.38);
+}
+
 .orbit__fail {
   position: absolute;
   inset: 0;
